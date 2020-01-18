@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-In between content
+{% for product in products %}
+  {{product.title}}
+  <br>
+{% endfor %}
 {% endblock %}

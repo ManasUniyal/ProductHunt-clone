@@ -6,7 +6,8 @@ from django.utils.timezone import utc
 from django.shortcuts import get_object_or_404
 
 def home(request):
-    return render(request, 'products/home.html')
+    products = Product.objects.all()
+    return render(request, 'products/home.html', {'products':products})
 
 @login_required(login_url = 'login')
 def create(request):
