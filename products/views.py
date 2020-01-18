@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product
 import datetime
 from django.utils.timezone import utc
+from django.shortcuts import get_object_or_404
 
 def home(request):
     return render(request, 'products/home.html')
@@ -21,8 +22,12 @@ def create(request):
             product.pub_date = datetime.datetime.utcnow().replace(tzinfo=utc)
             product.hunter = request.user
             product.save()
-            return redirect('home')
+            return redirect('/products/' + str(product.id))
         else:
             return render(request, 'products/create', {'error': 'All fields are compulsory'})
     else:
         return render(request, 'products/create.html')
+
+def details(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'products/details.html', {'product':product})

@@ -16,7 +16,7 @@ class Product(models.Model):
         return self.title
 
     def pub_date_pretty(self):
-        return datetime.datetime.now().date()
+        return self.pub_date.date()
 
     def summary(self):
         return self.body[:100]
