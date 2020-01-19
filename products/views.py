@@ -40,3 +40,12 @@ def upvote(request, product_id):
         product.votes_total += 1
         product.save()
         return redirect('/products/' + str(product_id))
+
+def search(request):
+    search_result_list = list()
+    if request.method == 'POST':
+        products = Product.objects.all()
+        for product in products:
+            if request.POST['search'].lower() in product.title.lower():
+                search_result_list.append(product)
+        return render(request, 'products/home.html', {'products': search_result_list})
