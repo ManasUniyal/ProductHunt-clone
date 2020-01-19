@@ -20,3 +20,7 @@ class Product(models.Model):
 
     def summary(self):
         return self.body[:100]
+
+class Vote(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
