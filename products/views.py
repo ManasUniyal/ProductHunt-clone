@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product
+from .models import Product, Vote
 import datetime
 from django.utils.timezone import utc
 from django.shortcuts import get_object_or_404
@@ -23,6 +23,10 @@ def create(request):
             product.pub_date = datetime.datetime.utcnow().replace(tzinfo=utc)
             product.hunter = request.user
             product.save()
+            vote = Vote()
+            vote.product = product
+            vote.user = request.user
+            vote.save()
             return redirect('/products/' + str(product.id))
         else:
             return render(request, 'products/create', {'error': 'All fields are compulsory'})
@@ -36,10 +40,21 @@ def details(request, product_id):
 @login_required(login_url = 'login')
 def upvote(request, product_id):
     if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
-        product.votes_total += 1
-        product.save()
-        return redirect('/products/' + str(product_id))
+        votes = Vote.objects.all()
+        flag = True
+        for vote in votes:
+            if vote.user == request.user and vote.product.id == product_id:
+                flag = False
+                break
+        if flag:
+            product = get_object_or_404(Product, id=product_id)
+            product.votes_total += 1
+            product.save()
+            vote = Vote()
+            vote.user = request.user
+            vote.product = product
+            vote.save()
+    return redirect('/products/'+str(product_id))
 
 def search(request):
     search_result_list = list()
